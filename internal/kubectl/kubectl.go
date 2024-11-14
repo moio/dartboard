@@ -26,6 +26,7 @@ import (
 	"strings"
 	"time"
 
+	"al.essio.dev/pkg/shellescape"
 	"github.com/rancher/dartboard/internal/vendored"
 )
 
@@ -151,7 +152,18 @@ func GetStatus(kubepath, kind, name, namespace string) (map[string]any, error) {
 	return out, nil
 }
 
-func K6run(kubeconfig, name, testPath string, envVars, tags map[string]string, printLogs, record bool) error {
+func K6run(kubeconfig, testPath string, envVars, tags map[string]string, printLogs bool, localBaseURL string, record bool) error {
+	// print what we are about to do
+	quotedArgs := []string{"run"}
+	for k, v := range envVars {
+		if k == "BASE_URL" {
+			v = localBaseURL
+		}
+		quotedArgs = append(quotedArgs, "-e", shellescape.Quote(fmt.Sprintf("%s=%s", k, v)))
+	}
+	quotedArgs = append(quotedArgs, shellescape.Quote(testPath))
+	log.Printf("Running equivalent of:\nk6 %s\n", strings.Join(quotedArgs, " "))
+
 	// if a kubeconfig is specified, upload it as secret to later mount it
 	if path, ok := envVars["KUBECONFIG"]; ok {
 		err := Exec(kubeconfig, nil, "--namespace="+K6Namespace, "delete", "secret", K6KubeSecretName, "--ignore-not-found")
