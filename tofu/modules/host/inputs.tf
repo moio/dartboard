@@ -8,6 +8,11 @@ variable "name" {
   type        = string
 }
 
+variable "backend" {
+  description = "Backend for this host"
+  type        = string
+}
+
 variable "backend_variables" {
   description = "Backend-specific configuration variables"
   type = any

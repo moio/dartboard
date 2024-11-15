@@ -1,16 +1,20 @@
 module "server_nodes" {
   count                 = var.server_count
-  source                = "../aws_host"
-  ami                   = var.ami
-  instance_type         = var.instance_type
-  availability_zone     = var.availability_zone
+  source                      = "../host"
   project_name          = var.project_name
   name                  = "${var.name}-server-${count.index}"
+  backend = "aws"
+  backend_variables = {
+    ami                   = var.ami
+    instance_type         = var.instance_type
+    availability_zone     = var.availability_zone
+    subnet_id             = var.subnet_id
+    vpc_security_group_id = var.vpc_security_group_id
+    root_volume_size_gb = 50
+  }
   ssh_key_name          = var.ssh_key_name
   ssh_private_key_path  = var.ssh_private_key_path
   ssh_user              = var.ssh_user
-  subnet_id             = var.subnet_id
-  vpc_security_group_id = var.vpc_security_group_id
   ssh_bastion_host      = var.ssh_bastion_host
   ssh_bastion_user      = var.ssh_bastion_user
   ssh_tunnels = count.index == 0 ? [
@@ -23,17 +27,21 @@ module "server_nodes" {
 
 module "agent_nodes" {
   count                       = var.agent_count
-  source                      = "../aws_host"
-  ami                         = var.ami
-  instance_type               = var.instance_type
-  availability_zone           = var.availability_zone
+  source                      = "../host"
   project_name                = var.project_name
   name                        = "${var.name}-agent-${count.index}"
+  backend = "aws"
+  backend_variables = {
+    ami                         = var.ami
+    instance_type               = var.instance_type
+    availability_zone           = var.availability_zone
+    subnet_id                   = var.subnet_id
+    vpc_security_group_id       = var.vpc_security_group_id
+    root_volume_size_gb = 50
+  }
   ssh_key_name                = var.ssh_key_name
   ssh_private_key_path        = var.ssh_private_key_path
   ssh_user                    = var.ssh_user
-  subnet_id                   = var.subnet_id
-  vpc_security_group_id       = var.vpc_security_group_id
   ssh_bastion_host            = var.ssh_bastion_host
   ssh_bastion_user            = var.ssh_bastion_user
   host_configuration_commands = var.host_configuration_commands

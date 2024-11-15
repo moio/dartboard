@@ -233,15 +233,19 @@ resource "aws_key_pair" "key_pair" {
 }
 
 module "bastion" {
-  source                = "../aws_host"
-  availability_zone     = var.availability_zone
+  source                = "../host"
   project_name          = var.project_name
   name                  = "bastion"
-  ami                   = var.bastion_host_ami
-  instance_type         = var.bastion_host_instance_type
+  backend = "aws"
+  backend_variables = {
+    availability_zone     = var.availability_zone
+    ami                   = var.bastion_host_ami
+    instance_type         = var.bastion_host_instance_type
+    subnet_id             = aws_subnet.public.id
+    vpc_security_group_id = aws_security_group.public.id
+    root_volume_size_gb = 50
+  }
   ssh_key_name          = aws_key_pair.key_pair.key_name
   ssh_private_key_path  = var.ssh_private_key_path
   ssh_user              = var.ssh_user
-  subnet_id             = aws_subnet.public.id
-  vpc_security_group_id = aws_security_group.public.id
 }

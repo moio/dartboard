@@ -1,13 +1,13 @@
 resource "aws_instance" "instance" {
-  ami                    = var.ami
-  instance_type          = var.instance_type
-  availability_zone      = var.availability_zone
+  ami                    = var.backend_variables.ami
+  instance_type          = var.backend_variables.instance_type
+  availability_zone      = var.backend_variables.availability_zone
   key_name               = var.ssh_key_name
-  subnet_id              = var.subnet_id
-  vpc_security_group_ids = [var.vpc_security_group_id]
+  subnet_id              = var.backend_variables.subnet_id
+  vpc_security_group_ids = [var.backend_variables.vpc_security_group_id]
 
   root_block_device {
-    volume_size = var.root_volume_size_gb
+    volume_size = var.backend_variables.root_volume_size_gb
   }
 
   user_data = templatefile("${path.module}/user_data.yaml", { ssh_user = var.ssh_user })
