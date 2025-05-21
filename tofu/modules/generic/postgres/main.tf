@@ -23,7 +23,7 @@ resource "ssh_resource" "install_postgres" {
   private_key  = file(var.ssh_private_key_path)
   user         = var.ssh_user
   bastion_host = var.network_config.ssh_bastion_host
-  bastion_user = var.network_config.ssh_user
+  bastion_user = var.network_config.ssh_bastion_user
 
   file {
     content = templatefile("${path.module}/install_postgres.sh", {
