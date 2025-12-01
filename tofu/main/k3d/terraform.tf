@@ -1,9 +1,9 @@
 terraform {
-  required_version = ">= 1.8.2"
+  required_version = "1.8.2"
   required_providers {
     docker = {
       source  = "kreuzwerker/docker"
-      version = "3.6.2"
+      version = "3.9.0"
     }
     k3d = {
       source  = "moio/k3d"

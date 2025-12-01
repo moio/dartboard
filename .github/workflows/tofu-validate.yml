@@ -1,0 +1,46 @@
+name: OpenTofu Validation
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - 'release/*'
+      - 'main'
+permissions:
+  contents: read
+jobs:
+  tofu-validate:
+    name: tofu-validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          submodules: recursive
+
+      - name: Setup Go
+        uses: actions/setup-go@41dfa10bad2bb2ae585af6ee5bb4d7d973ad74ed # v5.1.0
+        with:
+          go-version-file: './go.mod'
+          cache: false
+
+      - name: Download vendored binaries
+        run: sh download-vendored-bin.sh
+
+      - name: Check OpenTofu version
+        run: ./internal/vendored/bin/tofu --version
+
+      - name: Format check - k3d
+        run: ./internal/vendored/bin/tofu -chdir=./tofu/main/k3d fmt -check -recursive
+
+      - name: Format check - aws
+        run: ./internal/vendored/bin/tofu -chdir=./tofu/main/aws fmt -check -recursive
+
+      - name: Initialize and validate - k3d
+        run: |
+          ./internal/vendored/bin/tofu -chdir=./tofu/main/k3d init -backend=false
+          ./internal/vendored/bin/tofu -chdir=./tofu/main/k3d validate
+
+      - name: Initialize and validate - aws
+        run: |
+          ./internal/vendored/bin/tofu -chdir=./tofu/main/aws init -backend=false
+          ./internal/vendored/bin/tofu -chdir=./tofu/main/aws validate
