@@ -29,11 +29,13 @@ jobs:
       - name: Check OpenTofu version
         run: ./internal/vendored/bin/tofu --version
 
-      - name: Format check - k3d
-        run: ./internal/vendored/bin/tofu -chdir=./tofu/main/k3d fmt -check -recursive
-
-      - name: Format check - aws
-        run: ./internal/vendored/bin/tofu -chdir=./tofu/main/aws fmt -check -recursive
+      - name: Format check - all configurations
+        run: |
+          ./internal/vendored/bin/tofu -chdir=./tofu/main/k3d fmt -check -recursive
+          ./internal/vendored/bin/tofu -chdir=./tofu/main/aws fmt -check -recursive
+          ./internal/vendored/bin/tofu -chdir=./tofu/main/azure fmt -check -recursive
+          ./internal/vendored/bin/tofu -chdir=./tofu/main/harvester fmt -check -recursive
+          ./internal/vendored/bin/tofu -chdir=./tofu/modules fmt -check -recursive
 
       - name: Initialize and validate - k3d
         run: |
@@ -44,3 +46,13 @@ jobs:
         run: |
           ./internal/vendored/bin/tofu -chdir=./tofu/main/aws init -backend=false
           ./internal/vendored/bin/tofu -chdir=./tofu/main/aws validate
+
+      - name: Initialize and validate - azure
+        run: |
+          ./internal/vendored/bin/tofu -chdir=./tofu/main/azure init -backend=false
+          ./internal/vendored/bin/tofu -chdir=./tofu/main/azure validate
+
+      - name: Initialize and validate - harvester
+        run: |
+          ./internal/vendored/bin/tofu -chdir=./tofu/main/harvester init -backend=false
+          ./internal/vendored/bin/tofu -chdir=./tofu/main/harvester validate
