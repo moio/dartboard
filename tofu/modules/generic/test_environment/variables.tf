@@ -68,7 +68,7 @@ variable "downstream_cluster_templates" {
   }
 }
 
-# Note: this is kept constant for all templates because OpenTofu v1.8.2 does not allow to use
+# Note: this is kept constant for all templates because OpenTofu currently does not allow to use
 # each.value, each.key or count.index in expressions for module paths
 # context is https://github.com/opentofu/opentofu/blob/main/rfc/20240513-static-evaluation/module-expansion.md ->
 # https://github.com/opentofu/opentofu/issues/1896#issuecomment-2275763570 ->
